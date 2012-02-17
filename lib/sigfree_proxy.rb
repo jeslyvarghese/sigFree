@@ -13,7 +13,8 @@ class SigFreeProxy
 
   def start
   	Proxy.start(:host=>@listening_host,:port=>@listening_port,:debug=>true) do |conn|
-  		
+     conn.server :srv, :host => @forward_host, :port =>@forward_port
+
   		#to_process the request scheme
   		conn.on_data do |data|
   		end
