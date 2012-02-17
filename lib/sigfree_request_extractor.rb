@@ -1,4 +1,4 @@
-class RequestExtract
+class RequestExtractor
 	{
 		attr_writer :request
 		attr_reader :get, :post, :content
