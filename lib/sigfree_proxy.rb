@@ -5,15 +5,6 @@ require_relative('sigfree_request_extractor.rb')
 require_relative('sigfree_request_extractor.rb')
 
 
-<<<<<<< HEAD
-  def start
-  	Proxy.start(:host=>@listening_host,:port=>@listening_port,:debug=>true) do |conn|
-     conn.server :srv, :host => @forward_host, :port =>@forward_port
-
-  		#to_process the request scheme
-  		conn.on_data do |data|
-  		end
-=======
 module SigFree
   class Proxy
     attr_reader :data
@@ -24,7 +15,7 @@ module SigFree
     	@forward_host = forward_host
     	@forward_port = forward_port
     end
->>>>>>> c1ba5f3b3d14e8e90437f450d54082fab8b746eb
+
 
     def start
     	Proxy.start(:host=>@listening_host,:port=>@listening_port,:debug=>true) do |conn|
