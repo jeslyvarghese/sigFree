@@ -1,9 +1,9 @@
 require 'em-proxy'
-require 'require_relative'
 
-require_relative('sigfree_request_extractor.rb')
-require_relative('sigfree_url_decoder.rb')
-require_relative('sigfree_ascii_filter.rb')
+
+require 'sigfree_request_extractor.rb'
+require 'sigfree_url_decoder.rb'
+require 'sigfree_ascii_filter.rb'
 
 module SigFree
   class SiProxy
