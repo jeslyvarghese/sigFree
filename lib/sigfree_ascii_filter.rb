@@ -14,15 +14,19 @@ module ASCII
 			ascii_array = ascii_int
 			ascii_array.collect!{|num| num.to_s(16)}
 		end
+
+		def self.ascii_to_string(ascii_array)
+			ascii_array.collect!{|num| num.chr}
+		end
 	end
 
 	class Filter
-		def initialize(hex_set) 
-			@hex_set = hex_set
-		end
-		def filter
-			@hex_set.each{|hex_val| @hex_set.delete(hex_val) if hex_val.to_i<20||hex_val.to_i>'7E'.to_i}
-			@hex_set
+		def self.filter(ascii_array)
+			filtered = Array.new
+			ascii_array.collect!{|elem_val| filtered<<elem_val unless elem_val<20||elem_val>126}
+			puts "ascii_array:#{filtered}"
+			filtered
 		end
 	end
 end
+

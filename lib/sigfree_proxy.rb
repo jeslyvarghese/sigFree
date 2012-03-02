@@ -3,7 +3,7 @@ require 'require_relative'
 
 require_relative('sigfree_request_extractor.rb')
 require_relative('sigfree_url_decoder.rb')
-
+require_relative('sigfree_ascii_filter.rb')
 
 module SigFree
   class SiProxy
@@ -22,7 +22,8 @@ module SigFree
        conn.server :srv, :host => "127.0.0.1", :port => 9061
         #to_process the request scheme
     		conn.on_data do |data|
-    	  request_extractor = RequestExtractor.new(data) #call extractor
+    	  puts data
+        request_extractor = RequestExtractor.new(data) #call extractor
           request_extractor.extract_request
           if request_extractor.get!=nil
             header=request_extractor.get
@@ -35,6 +36,11 @@ module SigFree
           url_decoded_content = URLDecoder.decode(content) unless content.nil?
           print "Decoded Header: #{url_decoded_header}\nDecoded Content:#{url_decoded_content}"
           #call ascii
+          ascii_array_header = ASCII::String.new(url_decoded_header).ascii_int
+          ascii_filtered_header = ASCII::Filter.filter(ascii_array_header)
+          #ascii_filtered_content = Filter.new(String.new( url_decoded_content).ascii_int).filter unless content.nil?
+          print "ASCII Filtered Content: #{ascii_filtered_header}\nContent:"
+          print "In Characters:#{ASCII::String.ascii_to_string(ascii_filtered_header)}"
           #call instruction distler
           #call threshold match
           data
