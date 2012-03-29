@@ -1,8 +1,10 @@
 require 'em-proxy'
+require 'colorize'
+
 require_relative 'sigfree_request_extractor.rb'
 require_relative 'sigfree_url_decoder.rb'
 require_relative 'sigfree_ascii_filter.rb'
-
+require_relative 'sigfree_instruction_distler.rb'
 module SigFree
   class SiProxy
     attr_reader :data
@@ -40,8 +42,23 @@ module SigFree
           print "ASCII Filtered Content: #{ascii_filtered_header}\nContent:"
           print "In Characters:#{ASCII::String.ascii_to_string(ascii_filtered_header)}"
           #call instruction distler
+          instructionized_header = Distler::InstructionProcessor.to_instruction(ascii_filtered_header)
+          puts "Instructionixed header #{instructionized_header}"
+          disassembler = Distler::Disassembler.new
+          dissassembled_header = disassembler.disassemble(instructionized_header)
+          puts dissassembled_header
+          header_eifg = Distler::EIFG.new(dissassembled_header)
+          decision = header_eifg.construct_graph(dissassembled_header)
+          
+          #header_eifg.show_graph(eifg_array)
           #call threshold match
-          data
+          unless decision == 'blocked'
+            puts "Unblocked".green
+            data 
+          else
+            puts "Blocked".red
+            decision
+          end
         end
 
     		#to_process the response scheme

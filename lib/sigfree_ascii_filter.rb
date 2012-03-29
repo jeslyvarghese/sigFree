@@ -16,7 +16,8 @@ module ASCII
 		end
 
 		def self.ascii_to_string(ascii_array)
-			ascii_array.collect!{|num| num.chr}
+			string_array = ascii_array.collect{|num| num.chr}
+			string_array
 		end
 	end
 
