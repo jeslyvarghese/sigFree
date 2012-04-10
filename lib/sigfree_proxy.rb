@@ -48,6 +48,7 @@ module SigFree
           dissassembled_header = disassembler.disassemble(instructionized_header)
           puts dissassembled_header
           header_eifg = Distler::EIFG.new(dissassembled_header)
+          p header_eifg
           decision = header_eifg.construct_graph(dissassembled_header)
           
           #header_eifg.show_graph(eifg_array)
