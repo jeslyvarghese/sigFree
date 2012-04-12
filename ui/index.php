@@ -26,7 +26,7 @@
 					  	    decoded = jsonData[index]['decoded_header'];
 					  	    ascii = jsonData[index]['ascii_header'];
 					  	    inst = jsonData[index]['inst_header'];
-					  	    eifg = jsonData[index]['eifg'];
+					  	    eifg = "<a href="+jsonData[index]['eifg']+">EIFG</a>";
 					  	    valid_eifg = jsonData[index]['valid_eifg'];
                             inst_count = jsonData[index]['inst_count'];
                             decision = jsonData[index]['decision'];
