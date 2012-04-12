@@ -56,28 +56,23 @@ module Distler
 		def init(inst_hash)
 			@inst_hash = inst_hash
 			@eifg_array = Array.new
-			puts "inst_hash#{@inst_hash}"
 		end
 
 		def construct_graph(inst_hash)
-			eif_graph = RGL::DirectedAdjacencyGraph.new
 			di_graph = Graph.new
-
 			instruction_array = Array.new
+			eif_graph = RGL::DirectedAdjacencyGraph.new
+			eif_op = Hash.new
 			digraph do
 			
-			inst_hash['Mnemonic'].each do |key,value| #add all instructions to the graph
-				eif_graph.add_vertex value.to_s unless value==nil
-				#node value.to_s
-			end
-			
 			inst_hash['Instruction'].each do |key,value| #add all instructions to the graph
+				eif_graph.add_vertex value unless value==nil
 				node value unless value==nil
 			end
 			
 			address_pointer = 0
 			last_address = inst_hash['Mnemonic'].keys.max
-
+			@filename = "#{Dir.pwd}/graphs/op#{Time.now.usec}"
 			while address_pointer<=last_address do
 				inst = inst_hash['Instruction'][address_pointer]
 				mnemonic = inst_hash['Mnemonic'][address_pointer]
@@ -85,24 +80,20 @@ module Distler
 				if	mnemonic == 'illegal'
 					instruction_array[address_pointer] = inst
 					target = 'illegal'
-					target_mnemonic = 'illegal'
 				else
 					instruction_array[address_pointer]=inst
 					if $control_transfer.include? mnemonic
 						jmp_address = get_address(inst)
 						if jmp_address>last_address
 							target = 'external'
-							target_mnemonic = 'external'
 						else
 							target = inst_hash['Instruction'][jmp_address]
-							target_mnemonic = inst_hash['Mnemonic'][jmp_address]
 						end
 					else
 						target = inst_hash['Instruction'][address_pointer+length]
-						target_mnemonic = inst_hash['Mnemonic'][address_pointer+length]
 					end
 				end
-				if target_mnemonic==nil
+				if mnemonic==nil
 					address_pointer+=length
 					next
 				end
@@ -113,13 +104,11 @@ module Distler
 					address_pointer+=length
 				#end while inst_hash['Instruction'][address_pointer]==nil||address_pointer>last_address
 			end
-			save 'graphs/op','jpg'
+			save @filename,'jpg'
+			eif_op['Pic'] = "#{@filename}.jpg"
+			eif_op['Grp'] = eif_graph
 			end
-			eif_graph
-		end
-
-		def show_graph(eifg_array)
-			eif_graph
+			eif_op
 		end
 		
 		def get_address(inst)
@@ -127,11 +116,32 @@ module Distler
 			return split[1]
 		end
 	end
-end
 
-class SubGraph
-	def self.reduce_subgraph(graph)
-		subgraphs = graph.subgraphs
+	class InvalidFilter
+		def self.filter_invalid_flows(graph)
+			graph.each_vertex do |vertex|
+				immediate_adjacent = graph.adjacent_vertices(vertex) if graph.has_edge?(vertex,'invalid ')
+				p "Immediate Adjacent #{immediate_adjacent}"
+				unless immediate_adjacent==nil
+					if immediate_adjacent.size == 1
+						graph.remove_vertex(vertex)
+					end
+				end
+			end
+			graph.remove_vertex('invalid ')
+			graph
+		end
+	end
+
+	class PicGraphs
+		def self.create_pic(graph,prefix)
+			digraph do
+				graph.each_edge{|u,v| edge u.to_s,v.to_s}
+				prefix = "graphs/#{prefix}#{Time.now.usec}"
+				save prefix,"jpg"
+			end
+		end
 	end
 end
+
 
