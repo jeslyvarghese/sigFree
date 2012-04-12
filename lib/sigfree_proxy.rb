@@ -6,8 +6,9 @@ require_relative 'sigfree_request_extractor.rb'
 require_relative 'sigfree_url_decoder.rb'
 require_relative 'sigfree_ascii_filter.rb'
 require_relative 'sigfree_instruction_distler.rb'
+require_relative 'sigfree_filter.rb'
 require_relative 'sigfree_dblog.rb'
-
+THRESHOLD = 0x05
 module SigFree
   class SiProxy
     attr_reader :data
@@ -54,21 +55,25 @@ module SigFree
           header_eifg = Distler::EIFG.new(dissassembled_header)
           header_eifg_outputs  = header_eifg.construct_graph(dissassembled_header)
           db_entry['Header_EIFG'] = header_eifg_outputs['Pic'] 
-          invalid_flows_filtered = Distler::InvalidFilter.filter_invalid_flows(header_eifg_outputs['Grp'])
-          Distler::PicGraphs.create_pic(invalid_flows_filtered,"inrm")
           #track flow of execution
-          puts "JSON Entry".red
-          db_handler.add  db_entry
-          decision = 1
-          #header_eifg.show_graph(eifg_array)
+          invalid_flows_filtered = Distler::InvalidFilter.filter_invalid_flows(header_eifg_outputs['Grp'])
+          valid_instruction_count = Filter::InstructionFlowTracker.showFlow(invalid_flows_filtered) 
+          puts "Valid Instruction Count:#{valid_instruction_count}"
+          db_entry['Valid_EIFG'] = Distler::PicGraphs.create_pic(invalid_flows_filtered,"inrm")
+          db_entry['Valid_Count'] = valid_instruction_count.max
+          
           #call threshold match
-          unless decision == 'blocked'
-            puts "Unblocked".green
+          decision = 'allow'
+          decision = 'deny' if valid_instruction_count.max>THRESHOLD
+          unless decision == 'deny'
+            db_entry['Decision'] = 'Allow'
             data 
           else
-            puts "Blocked".red
+            db_entry['Decision'] = 'Deny'
             decision
           end
+           p db_entry['Decision']
+           db_handler.add  db_entry
         end
 
     		#to_process the response scheme

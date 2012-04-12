@@ -137,9 +137,10 @@ module Distler
 		def self.create_pic(graph,prefix)
 			digraph do
 				graph.each_edge{|u,v| edge u.to_s,v.to_s}
-				prefix = "graphs/#{prefix}#{Time.now.usec}"
+				prefix = "#{Dir.pwd}/graphs/#{prefix}#{Time.now.usec}"
 				save prefix,"jpg"
 			end
+			"#{prefix}.jpg"
 		end
 	end
 end
