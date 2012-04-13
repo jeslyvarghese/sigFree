@@ -2,7 +2,10 @@ require 'sinatra'
 
 ip = /.*/
 
-get "/#{ip}"  do
-	puts ip
-	"SigFree Says:#{ip}"
+get "/*"  do
+	"SigFree Says:#{params[:splat]}"
+end
+
+get '/deny' do
+	"SigFree Says: Denied The Request"	
 end
