@@ -60,8 +60,9 @@ module SigFree
           valid_instruction_count = Filter::InstructionFlowTracker.showFlow(invalid_flows_filtered) 
           puts "Valid Instruction Count:#{valid_instruction_count}"
           db_entry['Valid_EIFG'] = Distler::PicGraphs.create_pic(invalid_flows_filtered,"inrm")
-          db_entry['Valid_Count'] = valid_instruction_count.max
           
+          db_entry['Valid_Count'] = valid_instruction_count.max
+          p db_entry['Valid_Count']
           #call threshold match
           decision = 'allow'
           decision = 'deny' if valid_instruction_count.max>THRESHOLD
