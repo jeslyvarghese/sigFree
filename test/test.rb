@@ -14,6 +14,7 @@ while test_count<=test_rounds do
 	puts "GET String: #{string}"
 	begin
 		open(url){ |f|	
+			 f.each_line {|line| p line}
 		}
 	rescue EOFError
 		sleep 10
