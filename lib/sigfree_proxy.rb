@@ -8,7 +8,7 @@ require_relative 'sigfree_ascii_filter.rb'
 require_relative 'sigfree_instruction_distler.rb'
 require_relative 'sigfree_filter.rb'
 require_relative 'sigfree_dblog.rb'
-THRESHOLD = 0x05
+THRESHOLD = 0x03
 module SigFree
   class SiProxy
     attr_reader :data

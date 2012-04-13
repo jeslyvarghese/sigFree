@@ -10,6 +10,8 @@ module Filter
 			vertex = bfs_iterator.basic_forward
 			begin
 				while true
+					p "On Vertex:#{vertex}"
+					p "Has Neighbours:#{graph.adjacent_vertices(vertex)}"
 					if graph.adjacent_vertices(vertex).count == 0
 						iteration_vertex_count+=1
 						vertex_count.push iteration_vertex_count
